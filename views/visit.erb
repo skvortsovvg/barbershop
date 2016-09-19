@@ -24,9 +24,9 @@
     <label>Парикмахер</label>
     <select name="barber" class="form-control input-sm">
     	<option disabled selected="selected">Выберите парикмахера</option>
-    	<option>Walter White</option>
-		  <option>Jessie Pinkman</option>
-		  <option>Gus Fring</option>
+    	<option <%= params[:barber] == 'Walter White' ? 'selected' : '' %>>Walter White</option>
+		  <option <%= @barer == 'Jessie Pinkman' ? 'selected' : '' %>>Jessie Pinkman</option>
+		  <option <%= @barer == 'Gus Fring' ? 'selected' : '' %>>Gus Fring</option>
     </select>
   </div>
  
