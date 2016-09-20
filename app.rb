@@ -62,6 +62,10 @@ get '/logout' do
   erb "<div class='alert alert-message'>Logged out</div>"
 end
 
+get '/showusers' do
+  erb "Hello World"
+end
+
 post '/login/attempt' do
   if params['userpassword'] == 'secret' then
   	session[:identity] = params['username']
