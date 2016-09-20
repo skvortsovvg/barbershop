@@ -9,8 +9,11 @@ def get_db
 end
 
 configure do
+  
   enable :sessions
-  get_db().execute('CREATE TABLE IF NOT EXISTS
+  
+  db = get_db()
+  db.execute('CREATE TABLE IF NOT EXISTS
     "Users" (
     "ID" INTEGER PRIMARY KEY AUTOINCREMENT, 
     "Name" TEXT, 
@@ -18,6 +21,16 @@ configure do
     "DateStamp" TEXT, 
     "Barber" TEXT, 
     "Color" TEXT)')
+
+  db.execute('CREATE TABLE IF NOT EXISTS "Barbers" ("Id" INTEGER PRIMARY KEY, "Name" TEXT)');
+  #Заполним таблицу, если пустая
+  if db.execute('select count(*) from Barbers')[0][0] == 0 then
+      db.execute("insert into Barbers (Name) values ('Walter White')");
+      db.execute("insert into Barbers (Name) values ('Jessie Pinkman')");
+      db.execute("insert into Barbers (Name) values ('Gus Fring')");
+      db.execute("insert into Barbers (Name) values ('Bruce Willis')");
+  end
+
 end
 
 helpers do
@@ -44,6 +57,7 @@ get '/about' do
 end
 
 get '/visit' do
+  @barbers = get_db().execute('select * from Barbers');
 	erb :visit
 end
 
@@ -63,7 +77,18 @@ get '/logout' do
 end
 
 get '/showusers' do
-  erb "Hello World"
+    # @usr_table = Hash.new([])
+    # db = get_db
+    # #db.results_as_hash = true
+    # db.execute('select * from users order by id desc') do |row|
+    #   @usr_table << "<td>#{row.join("</td><td>")}</td>"
+    #   row.each {|key, val| @usr_table[key] = @usr_table[key] + "<td>#{val}</td>" }
+    # end
+    @usr_table = Hash.new([])
+    get_db.execute('select * from users order by id desc') do |row|
+      @usr_table[row.slice!(0)] = "<td>#{row.join("</td><td>")}</td>"
+    end
+  erb :showusers
 end
 
 post '/login/attempt' do
@@ -86,6 +111,7 @@ post '/visit' do
   hh.each do |key, value|
     if params[key].empty?
       @error = value
+      @barbers = get_db().execute('select * from Barbers');
       return erb :visit
     end
   end
