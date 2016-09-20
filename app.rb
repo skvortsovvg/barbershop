@@ -96,7 +96,7 @@ post '/visit' do
                   datestamp,
                   barber,
                   color)
-                values (?, ?, ?, ?, ?)', [params[:username], params[:plantime], params[:phoneno], params[:barber], params[:color]]);
+                values (?, ?, ?, ?, ?)', [params[:username], params[:phoneno], params[:plantime], params[:barber], params[:color]]);
 
 
   erb "Уважаемый #{params[:username]}, данные записаны! Ждем вас в #{params[:plantime]}"
