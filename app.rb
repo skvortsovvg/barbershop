@@ -4,10 +4,13 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sqlite3'
 
+def get_db
+  return SQLite3::Database.new('barbershop.db')
+end
+
 configure do
   enable :sessions
-  @db = SQLite3::Database.new('barbershop.db')
-  @db.execute('CREATE TABLE IF NOT EXISTS
+  get_db().execute('CREATE TABLE IF NOT EXISTS
     "Users" (
     "ID" INTEGER PRIMARY KEY AUTOINCREMENT, 
     "Name" TEXT, 
@@ -83,10 +86,20 @@ post '/visit' do
     end
   end
 
-	input = File.open('.\public\visit.txt', 'a+')
-	input.write("#{params[:username]}; #{params[:plantime]}; #{params[:phoneno]}; #{params[:barber]}\n")
-	input.close
-	erb "Уважаемый #{params[:username]}, данные записаны! Ждем вас в #{params[:plantime]}"
+	# input = File.open('.\public\visit.txt', 'a+')
+	# input.write("#{params[:username]}; #{params[:plantime]}; #{params[:phoneno]}; #{params[:barber]}\n")
+	# input.close
+	get_db().execute('INSERT INTO 
+                users 
+                  (name,
+                  phone,
+                  datestamp,
+                  barber,
+                  color)
+                values (?, ?, ?, ?, ?)', [params[:username], params[:plantime], params[:phoneno], params[:barber], params[:color]]);
+
+
+  erb "Уважаемый #{params[:username]}, данные записаны! Ждем вас в #{params[:plantime]}"
 
 end
 
