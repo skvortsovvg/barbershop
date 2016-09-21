@@ -44,6 +44,7 @@ get '/' do
 end
 
 before '/visit' do
+  @barbers = get_db().execute('select * from Barbers');
   unless session[:identity]
     session[:previous_url] = request.path
     @error = 'Sorry, you need to be logged in to visit ' + request.path
@@ -57,7 +58,6 @@ get '/about' do
 end
 
 get '/visit' do
-  @barbers = get_db().execute('select * from Barbers');
 	erb :visit
 end
 
@@ -77,14 +77,7 @@ get '/logout' do
 end
 
 get '/showusers' do
-    # @usr_table = Hash.new([])
-    # db = get_db
-    # #db.results_as_hash = true
-    # db.execute('select * from users order by id desc') do |row|
-    #   @usr_table << "<td>#{row.join("</td><td>")}</td>"
-    #   row.each {|key, val| @usr_table[key] = @usr_table[key] + "<td>#{val}</td>" }
-    # end
-    @usr_table = Hash.new([])
+    @usr_table = {}
     get_db.execute('select * from users order by id desc') do |row|
       @usr_table[row.slice!(0)] = "<td>#{row.join("</td><td>")}</td>"
     end
@@ -94,8 +87,8 @@ end
 post '/login/attempt' do
   if params['userpassword'] == 'secret' then
   	session[:identity] = params['username']
-	session[:pwd] = params['userpassword']
-  	erb :visit
+	  session[:pwd] = params['userpassword']
+    redirect to :visit
   else
     @error = "Invalid password!"
     erb :login_form
@@ -106,14 +99,14 @@ end
 post '/visit' do
 
   #validation
-  hh = {:username => 'Введите имя!',  :phoneno => 'Не указан телефон!', :plantime => 'Не указано время посещения!', :barber => 'Выберите парикмахера!'}
-
-  hh.each do |key, value|
-    if params[key].empty?
-      @error = value
-      @barbers = get_db().execute('select * from Barbers');
-      return erb :visit
-    end
+  hh = {  :username => 'Введите ваше имя',
+          :phoneno => 'Введите телефон',
+          :plantime => 'Введите дату и время' }
+ 
+  @error = hh.select {|key,_| params[key] == ""}.values.join(", ")
+ 
+  if @error != ''
+    return erb :visit
   end
 
 	# input = File.open('.\public\visit.txt', 'a+')
