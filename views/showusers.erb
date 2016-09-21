@@ -2,7 +2,7 @@
 <p>Наши любимые посетители)</p>
 </br>
 
-<table class="table"> <caption>Клиенты по записи:<option> 
+<table class="table table-striped table-bordered"> <caption>Клиенты по записи:<option> 
   <thead> 
     <tr> 
       <th>№</th> 
@@ -15,10 +15,10 @@
   </thead> 
   <tbody>
     <% @usr_table.each do |key, value| %>
-      <%= "<tr>" %>
+      <tr>
         <%= "<th scope='row'>#{key}</th>" %>
         <%= "#{value}" %> 
-      <%= "<tr>" %>
+      </tr>
     <% end %>
       </tbody> 
 </table>
