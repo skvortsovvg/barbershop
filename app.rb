@@ -23,12 +23,12 @@ configure do
     "Color" TEXT)')
 
   db.execute('CREATE TABLE IF NOT EXISTS "Barbers" ("Id" INTEGER PRIMARY KEY, "Name" TEXT)');
+  
   #Заполним таблицу, если пустая
   if db.execute('select count(*) from Barbers')[0][0] == 0 then
-      db.execute("insert into Barbers (Name) values ('Walter White')");
-      db.execute("insert into Barbers (Name) values ('Jessie Pinkman')");
-      db.execute("insert into Barbers (Name) values ('Gus Fring')");
-      db.execute("insert into Barbers (Name) values ('Bruce Willis')");
+    ['Walter White', 'Jessie Pinkman', 'Gus Fring', 'Bruce Willis'].each do |barber|
+      db.execute("insert into Barbers (Name) values (?)", [barber]);
+    end
   end
 
 end
@@ -53,7 +53,7 @@ before '/visit' do
 end
 
 get '/about' do
-  @error = 'something wrong!'
+  #@error = 'something wrong!'
 	erb :about
 end
 
@@ -77,10 +77,13 @@ get '/logout' do
 end
 
 get '/showusers' do
-    @usr_table = {}
-    get_db.execute('select * from users order by id desc') do |row|
-      @usr_table[row.slice!(0)] = "<td>#{row.join("</td><td>")}</td>"
-    end
+  # @usr_table = {}
+  # get_db.execute('select * from users order by id desc') do |row|
+  #   @usr_table[row.slice!(0)] = "<td>#{row.join("</td><td>")}</td>"
+  # end
+  db = get_db
+  db.results_as_hash = true
+  @usr_table = db.execute('select * from users order by id desc')
   erb :showusers
 end
 

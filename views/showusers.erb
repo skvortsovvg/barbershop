@@ -14,11 +14,15 @@
     </tr>
   </thead> 
   <tbody>
-    <% @usr_table.each do |key, value| %>
+    <% @usr_table.each do |value| %>
       <tr>
-        <%= "<th scope='row'>#{key}</th>" %>
-        <%= "#{value}" %> 
+        <th scope='row'><%="#{value['ID']}"%></th>
+        <td><%="#{value['Name']}"%></td> 
+        <td><%="#{value['DateStamp']}"%></td> 
+        <td><%="#{value['Phone']}"%></td> 
+        <td><%="#{value['Barber']}"%></td> 
+        <td bgcolor="<%=value['Color']%>"><%=value['Color']%></td>
       </tr>
-    <% end %>
+      <% end %>
       </tbody> 
 </table>
